@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using MeterImportV2.ViewModel;
+using System.Windows;
 
 namespace MeterImportV2
 {
@@ -10,6 +11,7 @@ namespace MeterImportV2
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
