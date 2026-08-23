@@ -4,9 +4,77 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MeterImportV2"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        mc:Ignorable="d" Language="ru-RU" WindowStartupLocation="CenterScreen" Background="White"
+        Title="Meter Import" Width="600" MinWidth="600" MaxWidth="800" SizeToContent="Height" MinHeight="280">
+    <Window.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}"/>
+    </Window.Resources>
+    <Grid Margin="20 10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Внести показания ОДПУ" FontWeight="Bold" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 15"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Тип ресурса"/>
+                <ComboBox>
+                    <ComboBoxItem>Элемент 1</ComboBoxItem>
+                    <ComboBoxItem>Элемент 2</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <TextBlock Text="Компания"/>
+                <ComboBox>
+                    <ComboBoxItem>Элемент 1</ComboBoxItem>
+                    <ComboBoxItem>Элемент 2</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2" Margin="0 30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Шаблон"/>
+            <TextBlock Text="Показания" Grid.Row="2"/>
+            <TextBox Grid.Column="2"/>
+            <TextBox Grid.Column="2" Grid.Row="2"/>
+            <Button Grid.Column="4" Content="Обзор..."/>
+            <Button Grid.Column="4" Content="Обзор..." Grid.Row="2"/>
+        </Grid>
+        <Button  Grid.Row="3" Content="Заполнить" Width="130" Height="30" HorizontalAlignment="Right" Margin="20 0"/>
+        <Grid Grid.Row="5" Margin="10 0 0 10" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Журнал" FontWeight="Bold" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Foreground="SpringGreen"  Margin="0 10"/>
+            <TextBlock Text="⚠ Не найдены показания:" FontWeight="Bold" Foreground="Orange" Grid.Row="2" Visibility="Collapsed"/>
+            <TextBlock Grid.Row="3" Margin="0 5 0 10" Visibility="Collapsed"/>
+            <TextBlock Text="✗ Ошибка:" Grid.Row="4" Foreground="Red" FontWeight="Bold" Visibility="Collapsed"/>
+            <TextBlock Grid.Row="5" Margin="0 5 0 10" Visibility="Collapsed"/>
+        </Grid>
     </Grid>
 </Window>
