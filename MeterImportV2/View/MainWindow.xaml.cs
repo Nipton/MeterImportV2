@@ -8,10 +8,10 @@ namespace MeterImportV2
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainViewModel vm)
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            DataContext = vm;
         }
     }
 }

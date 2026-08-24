@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace MeterImportV2.Models
+namespace MeterImportV2.ViewModel.Helpers
 {
     public class EnumItem<T> where T : Enum
     {
