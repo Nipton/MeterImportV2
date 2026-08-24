@@ -1,0 +1,33 @@
+{
+  "Readers": {
+    "Electricity": {
+      "Dial": {
+        "AddressColumn": "B",
+        "SerialColumn": "D",
+        "ConsumptionColumn": "J",
+        "TariffZoneColumn": "G",
+        "HeaderRow" : 1
+      },
+      "Smart": {
+        "SerialColumn": "",
+        "ConsumptionColumn": "",
+        "TariffZoneColumn": ""
+      },
+      "ComfortRule": {
+        "SerialColumn": "",
+        "ConsumptionColumn": "",
+        "TariffZoneColumn": ""
+      }
+    },
+    "ColdWater": {
+      "Dial": {
+        "SerialColumn": "",
+        "ConsumptionColumn": ""
+      },
+      "ComfortRule": {
+        "SerialColumn": "",
+        "ConsumptionColumn": ""
+      }
+    }
+  }
+}
