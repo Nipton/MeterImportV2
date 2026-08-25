@@ -4,5 +4,6 @@
     {
         string? SelectFile(string title);
         void ShowWarning(string message);
+        void ShowError(string message, string title);
     }
 }

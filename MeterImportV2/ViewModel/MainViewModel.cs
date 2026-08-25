@@ -1,4 +1,5 @@
-﻿using MeterImportV2.Interfaces;
+﻿using MeterImportV2.Exceptions;
+using MeterImportV2.Interfaces;
 using MeterImportV2.Models.Enums;
 using MeterImportV2.ViewModel.Helpers;
 using System.Windows.Input;
@@ -9,6 +10,8 @@ namespace MeterImportV2.ViewModel
     {
         private readonly IDialogService _dialogService;
         private readonly IFileValidator _fileValidator;
+        private readonly IImportServiceFactory _factory;
+        private bool isProcessing;
         private string? templatePath;
         private string? readingsPath;
         private EnumItem<ResourceType> selectedResourceType = null!;
@@ -50,10 +53,11 @@ namespace MeterImportV2.ViewModel
         public ICommand SelectTemplateCommand { get; }
         public ICommand SelectReadingsCommand { get; }
         public ICommand ImportCommand { get; }
-        public MainViewModel(IDialogService dialogService, IFileValidator fileValidator)
+        public MainViewModel(IDialogService dialogService, IFileValidator fileValidator, IImportServiceFactory factory)
         {
             _dialogService = dialogService;
             _fileValidator = fileValidator;
+            _factory = factory;
             availableCompanies = new() { 
                 { ResourceType.Electricity, new[] { Company.Dial, Company.Smart, Company.ComfortRule } },
                 { ResourceType.ColdWater, new[] { Company.Dial, Company.ComfortRule } } };
@@ -80,13 +84,26 @@ namespace MeterImportV2.ViewModel
         }
         private void Import()
         {
-            if (!ValidateFilePath())
-                return;
-
+            isProcessing = true;
+            try
+            {
+                if (!ValidateFilePath())
+                    return;
+                var reader = _factory.CreateReader(SelectedResourceType.Value, SelectedCompany.Value);
+                var readerResult = reader.Read(ReadingsPath!);
+            }
+            catch(ReaderException ex)
+            {
+                _dialogService.ShowError(ex.Message, "Ошибка во время чтения файла с показаниями");
+            }
+            finally
+            {
+                isProcessing = false;
+            }
         }
         private bool CanImport()
         {
-            return !string.IsNullOrWhiteSpace(ReadingsPath) && !string.IsNullOrWhiteSpace(TemplatePath) && SelectedResourceType != null && SelectedCompany != null;
+            return !isProcessing && !string.IsNullOrWhiteSpace(ReadingsPath) && !string.IsNullOrWhiteSpace(TemplatePath) && SelectedResourceType != null && SelectedCompany != null;
         }
         private bool ValidateFilePath()
         {

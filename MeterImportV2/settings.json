@@ -6,7 +6,7 @@
         "SerialColumn": "D",
         "ConsumptionColumn": "J",
         "TariffZoneColumn": "G",
-        "HeaderRow" : 1
+        "HeaderRow": 1
       },
       "Smart": {
         "SerialColumn": "",
@@ -29,5 +29,13 @@
         "ConsumptionColumn": ""
       }
     }
+  },
+  "Writer": {
+    "AddressColumn": "B",
+    "SerialColumn": "E",
+    "CurrentReadingColumn": "G",
+    "PreviousReadingColumn": "H",
+    "TariffZoneColumn": "F",
+    "HeaderRow": 2
   }
 }
