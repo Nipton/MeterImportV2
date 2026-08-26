@@ -6,9 +6,10 @@
         xmlns:local="clr-namespace:MeterImportV2" 
         mc:Ignorable="d" xmlns:viewmodel="clr-namespace:MeterImportV2.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         Language="ru-RU" WindowStartupLocation="CenterScreen" Background="White"
-        Title="Meter Import" Width="630" MinWidth="630" MaxWidth="1200" SizeToContent="Height" MinHeight="280">
+        Title="Meter Import" Width="630" MinWidth="630"  SizeToContent="Height" MinHeight="280">
     <Window.Resources>
         <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
     <Grid Margin="20 10">
         <Grid.RowDefinitions>
@@ -17,7 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Внести показания ОДПУ" FontWeight="Bold" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 15"/>
         <Grid Grid.Row="1">
@@ -49,27 +50,53 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="Шаблон"/>
             <TextBlock Text="Показания" Grid.Row="2"/>
-            <TextBox Grid.Column="2" Text="{Binding TemplatePath}"/>
-            <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding ReadingsPath}"/>
+            <TextBox Grid.Column="2" Text="{Binding TemplatePath, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding ReadingsPath, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="4" Content="Обзор..." Command="{Binding SelectTemplateCommand}"/>
             <Button Grid.Column="4" Content="Обзор..." Grid.Row="2" Command="{Binding SelectReadingsCommand}"/>
         </Grid>
         <Button  Grid.Row="3" Content="Заполнить" Width="130" Height="30" HorizontalAlignment="Right" Margin="20 0" Command="{Binding ImportCommand}"/>
-        <Grid Grid.Row="5" Margin="10 0 0 10" Visibility="Collapsed">
+        <Grid Grid.Row="5" Margin="10 0 0 10" Visibility="{Binding HasInfoMessages, Converter={StaticResource BoolToVis}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Журнал" FontWeight="Bold" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock Grid.Row="1" Foreground="SpringGreen"  Margin="0 10"/>
-            <TextBlock Text="⚠ Не найдены показания:" FontWeight="Bold" Foreground="Orange" Grid.Row="2" Visibility="Collapsed"/>
-            <TextBlock Grid.Row="3" Margin="0 5 0 10" Visibility="Collapsed"/>
-            <TextBlock Text="✗ Ошибка:" Grid.Row="4" Foreground="Red" FontWeight="Bold" Visibility="Collapsed"/>
-            <TextBlock Grid.Row="5" Margin="0 5 0 10" Visibility="Collapsed"/>
+            <StackPanel>
+                <TextBlock Text="Журнал" FontWeight="Bold" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 5"/>
+                <ItemsControl ItemsSource="{Binding InfoMessages}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Message}" FontSize="16" FontWeight="Bold" Foreground="SpringGreen" TextWrapping="Wrap" Margin="0 3"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+            <ScrollViewer Grid.Row="1" Margin="0 10" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <StackPanel Visibility="{Binding HasWarningMessages, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="⚠ Предупреждения:" FontWeight="Bold" Foreground="Orange" Margin="0 0 0 5"/>
+                    <ItemsControl ItemsSource="{Binding WarningMessages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}" FontSize="13" TextWrapping="Wrap" Margin="0 3"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                    <StackPanel Visibility="{Binding HasErrorMessages, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="✗ Ошибки:" FontWeight="Bold" Foreground="Red" Margin="0 0 0 5"/>
+                        <ItemsControl ItemsSource="{Binding ErrorMessages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0 3"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>   
+                </StackPanel>
+            </ScrollViewer>
+            <Button Grid.Row="2"  MinWidth="130" MinHeight="30" HorizontalAlignment="Right" Margin="20 10" Content="Закрыть журнал" Command="{Binding CloseLogsCommand}"/>
         </Grid>
     </Grid>
 </Window>

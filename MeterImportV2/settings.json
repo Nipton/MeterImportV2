@@ -21,8 +21,10 @@
     },
     "ColdWater": {
       "Dial": {
-        "SerialColumn": "",
-        "ConsumptionColumn": ""
+        "AddressColumn": "B",
+        "SerialColumn": "D",
+        "ConsumptionColumn": "H",
+        "HeaderRow": 7
       },
       "ComfortRule": {
         "SerialColumn": "",
@@ -33,9 +35,9 @@
   "Writer": {
     "AddressColumn": "B",
     "SerialColumn": "E",
-    "CurrentReadingColumn": "G",
-    "PreviousReadingColumn": "H",
+    "CurrentReadingColumn": "H",
+    "PreviousReadingColumn": "G",
     "TariffZoneColumn": "F",
-    "HeaderRow": 2
+    "HeaderRow": 1
   }
 }
