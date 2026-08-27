@@ -20,10 +20,13 @@ namespace MeterImportV2.Readers
             using var workbook = new XLWorkbook(path);
             if (workbook.Worksheets.Count == 0)
                 throw new ImportException("Файл не содержит листов");
-            var worksheet = workbook.Worksheet(1);
+            var worksheet = workbook.Worksheets.LastOrDefault(x => x.LastRowUsed() != null);
+            if (worksheet == null)
+                throw new ImportException("Не найден лист с данными");
             var rows = worksheet.RowsUsed().Skip(_column.HeaderRow);
             List<MeterReading> readings = new();
             List<ImportMessage> messages = new();
+            messages.Add(CreateMessage($"Используется лист '{worksheet.Name}'", MessageType.Info));
             foreach (var row in rows)
             {
                 try

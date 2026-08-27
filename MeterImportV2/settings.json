@@ -23,7 +23,7 @@
       "Dial": {
         "AddressColumn": "B",
         "SerialColumn": "D",
-        "ConsumptionColumn": "H",
+        "ConsumptionColumn": "K",
         "HeaderRow": 7
       },
       "ComfortRule": {

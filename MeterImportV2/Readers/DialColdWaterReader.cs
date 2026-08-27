@@ -1,8 +1,6 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using MeterImportV2.Exceptions;
 using MeterImportV2.Helpers;
-using MeterImportV2.Interfaces;
 using MeterImportV2.Models;
 using MeterImportV2.Models.Enums;
 using Microsoft.Extensions.Options;
@@ -25,7 +23,7 @@ namespace MeterImportV2.Readers
                 messages.Add(CreateMessage($"Пропущен серийный номер в строке {rowNumber}", MessageType.Warning));
                 return;
             }
-            string consumptionString = row.Cell(_column.ConsumptionColumn).GetString();
+            string consumptionString = row.Cell(_column.ConsumptionColumn).GetString(); 
             if (!decimal.TryParse(consumptionString, out decimal consumption))
             {
                 messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {rowNumber}", MessageType.Warning));

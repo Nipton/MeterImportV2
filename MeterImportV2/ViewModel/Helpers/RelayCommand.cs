@@ -23,9 +23,5 @@ namespace MeterImportV2.ViewModel.Helpers
         {
             execute();
         }
-        public void RaiseCanExecuteChanged() 
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
     }
 }

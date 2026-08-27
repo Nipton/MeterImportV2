@@ -14,7 +14,6 @@ namespace MeterImportV2.ViewModel
         private readonly IDialogService _dialogService;
         private readonly IFileValidator _fileValidator;
         private readonly IImportServiceFactory _factory;
-        private bool isProcessing;
         private string? templatePath;
         private string? readingsPath;
         private EnumItem<ResourceType> selectedResourceType = null!;
@@ -28,15 +27,6 @@ namespace MeterImportV2.ViewModel
         public bool HasWarningMessages => WarningMessages.Any();
         public bool HasErrorMessages => ErrorMessages.Any();
         public event EventHandler? JournalVisibilityChanged;
-        public bool IsProcessing
-        {
-            get => isProcessing;
-            set
-            {
-                if (Set(ref isProcessing, value))
-                    ImportCommand.RaiseCanExecuteChanged();
-            }
-        }
         public string? TemplatePath
         {
             get => templatePath;
@@ -79,7 +69,7 @@ namespace MeterImportV2.ViewModel
         
         public ICommand SelectTemplateCommand { get; }
         public ICommand SelectReadingsCommand { get; }
-        public RelayCommand ImportCommand { get; }
+        public AsyncRelayCommand ImportCommand { get; }
         public ICommand CloseLogsCommand { get; }
         public MainViewModel(IDialogService dialogService, IFileValidator fileValidator, IImportServiceFactory factory)
         {
@@ -94,7 +84,7 @@ namespace MeterImportV2.ViewModel
 
             SelectTemplateCommand = new RelayCommand(GetTemplatePath);
             SelectReadingsCommand = new RelayCommand(GetReadingsPath);
-            ImportCommand = new RelayCommand(Import, CanImport); 
+            ImportCommand = new AsyncRelayCommand(Import, CanImport); 
             CloseLogsCommand = new RelayCommand(CloseLogs);
         }
         private void UpdateCompanies()
@@ -111,23 +101,26 @@ namespace MeterImportV2.ViewModel
         {
             ReadingsPath = _dialogService.SelectFile("Выберите файл с показаниями") ?? ReadingsPath;
         }
-        private void Import()
+        private async Task Import()
         {
-            IsProcessing = true;
             CleanLogs();
             try
             {
-                if (!ValidateFilePath())
+                var resourceType = SelectedResourceType.Value;
+                var company = SelectedCompany.Value;
+                var readingsPath = ReadingsPath!;
+                var templatePath = TemplatePath!;
+                if (!ValidateFilePath(templatePath, readingsPath))
                     return;
-                var reader = _factory.CreateReader(SelectedResourceType.Value, SelectedCompany.Value);
-                var readerResult = reader.Read(ReadingsPath!);
+                var reader = _factory.CreateReader(resourceType, company);
+                var readerResult = await Task.Run(() => reader.Read(readingsPath));
                 if (!readerResult.Readings.Any())
                 {
                     _dialogService.ShowWarning("Нет записей в файле с показаниями");
                     return;
                 }
                 var writer = _factory.CreateWriter();
-                var writerMessages = writer.Write(readerResult.Readings, TemplatePath!, SelectedResourceType.Value, SelectedCompany.Value);
+                var writerMessages = await Task.Run(() => writer.Write(readerResult.Readings, templatePath, resourceType, company));
                 AddMessages(readerResult.ImportMessages);
                 AddMessages(writerMessages);
                 OnJournalVisibilityChanged();
@@ -147,10 +140,6 @@ namespace MeterImportV2.ViewModel
             catch (Exception)
             {
                 _dialogService.ShowError($"Непредвиденная ошибка", "Ошибка");
-            }
-            finally
-            {
-                IsProcessing = false;
             }
         }
         private void AddMessages(IEnumerable<ImportMessage> messages)
@@ -174,17 +163,17 @@ namespace MeterImportV2.ViewModel
         }
         private bool CanImport()
         {
-            return !IsProcessing && !string.IsNullOrWhiteSpace(ReadingsPath) && !string.IsNullOrWhiteSpace(TemplatePath);
+            return !string.IsNullOrWhiteSpace(ReadingsPath) && !string.IsNullOrWhiteSpace(TemplatePath);
         }
-        private bool ValidateFilePath()
+        private bool ValidateFilePath(string templatePath, string readingsPath)
         {
-            var templateValid = _fileValidator.ValidateFilePath("Шаблон", TemplatePath);
+            var templateValid = _fileValidator.ValidateFilePath("Шаблон", templatePath);
             if (!templateValid.IsValid)
             {
                 _dialogService.ShowWarning(templateValid.Message);
                 return false;
             }
-            var readingsValid = _fileValidator.ValidateFilePath("Файл показаний", ReadingsPath);
+            var readingsValid = _fileValidator.ValidateFilePath("Файл показаний", readingsPath);
             if (!readingsValid.IsValid)
             {
                 _dialogService.ShowWarning(readingsValid.Message);
