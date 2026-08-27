@@ -20,14 +20,14 @@ namespace MeterImportV2.Readers
                 return;
             }
             string address = row.Cell(_column.AddressColumn).GetString();
-            string tariffZone = TariffZoneHelper.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
-
-            string consumptionString = row.Cell(_column.ConsumptionColumn).GetString();
             if (string.IsNullOrWhiteSpace(address))
             {
                 messages.Add(CreateMessage($"Пропущен адрес для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
                 return;
             }
+            string tariffZone = TariffZoneHelper.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
+
+            string consumptionString = row.Cell(_column.ConsumptionColumn).GetString();
             if (!decimal.TryParse(consumptionString, out decimal consumption))
             {
                 messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {rowNumber}", MessageType.Warning));

@@ -78,7 +78,7 @@ namespace MeterImportV2.ViewModel
             _factory = factory;
             availableCompanies = new() { 
                 { ResourceType.Electricity, new[] { Company.Dial, Company.Smart, Company.ComfortRule } },
-                { ResourceType.ColdWater, new[] { Company.Dial, Company.ComfortRule } } };
+                { ResourceType.ColdWater, new[] { Company.Dial } } };
             ResourceTypes = Enum.GetValues<ResourceType>().Select(x => new EnumItem<ResourceType>(x)).ToList();
             SelectedResourceType = ResourceTypes.Single(x => x.Value == ResourceType.Electricity);
 
@@ -127,7 +127,7 @@ namespace MeterImportV2.ViewModel
             }
             catch(ImportException ex)
             {
-                _dialogService.ShowError(ex.Message, "Ошибка во время чтения файла с показаниями");
+                _dialogService.ShowError(ex.Message, "Ошибка");
             }
             catch (IOException)
             {

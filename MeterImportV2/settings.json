@@ -9,14 +9,14 @@
         "HeaderRow": 1
       },
       "Smart": {
-        "SerialColumn": "",
-        "ConsumptionColumn": "",
-        "TariffZoneColumn": ""
+        "SerialColumn": "F",
+        "ConsumptionColumn": "J",
+        "HeaderRow": 5
       },
       "ComfortRule": {
-        "SerialColumn": "",
-        "ConsumptionColumn": "",
-        "TariffZoneColumn": ""
+        "SerialColumn": "F",
+        "ConsumptionColumn": "J",
+        "HeaderRow": 5
       }
     },
     "ColdWater": {
