@@ -67,7 +67,8 @@
                 <ItemsControl ItemsSource="{Binding InfoMessages}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Message}" FontSize="16" FontWeight="Bold" Foreground="SpringGreen" TextWrapping="Wrap" Margin="0 3"/>
+                            
+                            <TextBlock Text="{Binding Message}" FontSize="16" FontWeight="Bold" Foreground="SeaGreen" TextWrapping="Wrap" Margin="0 3"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

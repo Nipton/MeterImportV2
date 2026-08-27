@@ -49,7 +49,7 @@ namespace MeterImportV2.Writers
             }
             messages.Add(new ImportMessage($"Успешно обработано {successCount} {WordForms.GetRecordsWord(successCount)} из {rowCount}", MessageType.Info));
             workbook.SaveAs(CreateResultPath(path));
-            messages.Add(new ImportMessage("Файл был сохранен на рабочий стол.", MessageType.Info));
+            messages.Add(new ImportMessage("Файл был сохранен на рабочий стол", MessageType.Info));
             return messages;
         }
         private bool ProcessRow(IXLRow row, List<ImportMessage> messages, Dictionary<(string Serial, string TariffZone), MeterReading> readings, Dictionary<string, List<SpecialMeter>>? specialMeters)

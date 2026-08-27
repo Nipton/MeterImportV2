@@ -41,7 +41,7 @@
     <!--Button-->
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground"  Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="MinWidth" Value="100"/>
         <Setter Property="MinHeight" Value="25"/>
         <Setter Property="FontWeight" Value="Light"/>
@@ -57,12 +57,12 @@
                             <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#50026E"/>
+                            <Setter Property="Background" Value="{StaticResource ButtonPressedBackground}"/>
                             <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.3"/>
-                            <Setter Property="Foreground" Value="SlateGray"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -189,8 +189,8 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ComboBoxItem">
-                    <Setter Property="Background" Value="#E0C8EA"/>
-                    <Setter Property="BorderBrush" Value="#E0C8EA"/>
+                    <Setter Property="Background" Value="{StaticResource BackgroundHoverBrush}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource BackgroundHoverBrush}"/>
                     <Setter Property="FontSize" Value="16"/>
                     <Setter Property="MinHeight" Value="26"/>
                     <Setter Property="BorderThickness" Value="1"/>
@@ -205,7 +205,7 @@
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="{StaticResource ComboBoxItem.MouseOver.Background}"/>
                                         <Setter Property="BorderThickness" Value="1"/>
-                                        <Setter Property="BorderBrush" Value="#50026E"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource BorderHoverBrush}"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
