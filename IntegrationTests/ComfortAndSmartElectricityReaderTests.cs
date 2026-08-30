@@ -1,4 +1,6 @@
-﻿using MeterImportV2.Models;
+﻿using MeterImportV2.Exceptions;
+using MeterImportV2.Models;
+using MeterImportV2.Models.Enums;
 using MeterImportV2.Readers;
 using Microsoft.Extensions.Options;
 using System.IO;
@@ -37,10 +39,6 @@ namespace MeterImportV2.IntegrationTests
             var readings = result.Readings.Values;
             int count = result.Readings.Count();
 
-            foreach (var reading in result.Readings)
-            {
-                Console.WriteLine(reading);
-            }
             // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(readings);
@@ -49,6 +47,65 @@ namespace MeterImportV2.IntegrationTests
             Assert.Contains(meter1, readings);
             Assert.Contains(meter2, readings);
             Assert.Contains(meter3, readings);
+        }
+        [Theory]
+        [InlineData("300")]
+        [InlineData("100")]
+        [InlineData("250")]
+        [InlineData("700")]
+        [InlineData("333")]
+        [InlineData("800")]
+        [InlineData("444")]
+        public void Read_ConflictingSerials_ReturnsErrors(string serial)
+        {
+            // Act
+            var result = _reader.Read(_testFilePath);
+            var errorMessages = result.ImportMessages.Where(x => x.MessageType == MessageType.Error).ToList();
+            var count = errorMessages.Count();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(errorMessages);
+            Assert.Equal(7, count);
+            Assert.Contains(errorMessages, m => m.Message.Contains($"Невозможно определить тарифную зону для ПУ {serial}, так как обнаружены конфликтующие записи"));
+        }
+        [Fact]
+        public void Read_ConflictingSerials_ReturnsWarning()
+        {
+            // Act
+            var result = _reader.Read(_testFilePath);
+            var warningMessages = result.ImportMessages.Where(x => x.MessageType == MessageType.Warning).ToList();
+            var count = warningMessages.Count();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(warningMessages);
+            Assert.Equal(5, count);
+
+            Assert.Contains(warningMessages, m => m.Message.Contains("Не удалось прочитать показания для ПУ 200, строка 7"));
+            Assert.Contains(warningMessages, m => m.Message.Contains("Пропущен серийный номер в строке 12"));
+            Assert.Contains(warningMessages, m => m.Message.Contains("Не удалось прочитать показания для ПУ 400, строка 13"));
+            Assert.Contains(warningMessages, m => m.Message.Contains("Некорректное показание -555 для ПУ 500, строка 14"));
+            Assert.Contains(warningMessages, m => m.Message.Contains("Некорректное показание 1000001 для ПУ 600, строка 15"));
+        }
+        [Fact]
+        public void Read_EmptyWorkbook_ThrowsException()
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.xlsx");
+            try
+            {
+                using var workbook = new ClosedXML.Excel.XLWorkbook();
+                workbook.AddWorksheet("Sheet1");
+                workbook.SaveAs(tempPath);
+
+                var exception = Assert.Throws<ImportException>(() => _reader.Read(tempPath));
+                Assert.Contains("Не найден лист с данными", exception.Message);
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
+            }
         }
     }
 }

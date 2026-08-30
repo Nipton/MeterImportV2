@@ -12,7 +12,7 @@ namespace MeterImportV2.Readers
         protected readonly ReadingsColumnSettings _column;
         protected const string MessagePrefix = "Показания: ";
         protected readonly List<ImportMessage> _messages = new();
-        private readonly HashSet<string> _invalidSerials = new();
+        private readonly HashSet<string> _invalidSerials = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<(string Serial, string TariffZone), MeterReading> _readings = new(new TupleStringComparer());
         protected BaseReader(ReadingsColumnSettings column)
         {
