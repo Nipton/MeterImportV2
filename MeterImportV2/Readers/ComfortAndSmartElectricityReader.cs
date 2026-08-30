@@ -9,11 +9,9 @@ namespace MeterImportV2.Readers
 {
     public class ComfortAndSmartElectricityReader : BaseReader
     {
-        private const string DayTariff = "день";
-        private const string NightTariff = "ночь";
         public ComfortAndSmartElectricityReader(IOptions<AppSettings> settings) 
             : base(settings.Value.GetReaderSettings(ResourceType.Electricity, Company.ComfortRule)){ }
-        protected override void ProcessRow(IXLRow row, List<ImportMessage> messages, List<MeterReading> readings)
+        protected override void ProcessRow(IXLRow row)
         {
             var serialCell = row.Cell(_column.SerialColumn);
             var mergetRange = row.Worksheet.MergedRanges.FirstOrDefault(r => r.Contains(serialCell));
@@ -24,46 +22,46 @@ namespace MeterImportV2.Readers
             var serialBelow = GetSerialBelow(row);
             if ((mergetRange != null && isTopCell) || (!string.IsNullOrWhiteSpace(serialNumber) && serialNumber.Equals(serialBelow)))
             {
-                if (!ValidateSerialNumber(row, messages, serialNumber))
+                if (!ValidateSerialNumber(row, serialNumber))
                     return;
-                if (!TryGetConsumption(row, messages, serialNumber, out var consumption))
+                if (!TryGetConsumption(row, serialNumber, out var consumption))
                     return;
-                if (!TryGetConsumption(row.RowBelow(), messages, serialNumber, out var consumptionBelow))
+                if (!TryGetConsumption(row.RowBelow(), serialNumber, out var consumptionBelow))
                     return;
-                readings.Add(new MeterReading(serialNumber, consumption, DayTariff));
-                readings.Add(new MeterReading(serialNumber, consumptionBelow, NightTariff));
+                TryAddReading(new MeterReading(serialNumber, consumption, TariffZone.DayTariff));
+                TryAddReading(new MeterReading(serialNumber, consumptionBelow, TariffZone.NightTariff));
             }
             else if ((mergetRange != null && !isTopCell)|| serialNumber.Equals(serialAbove))
                 return;
             else  
             {
-                if (!ValidateSerialNumber(row, messages, serialNumber))
+                if (!ValidateSerialNumber(row, serialNumber))
                     return;
-                if (!TryGetConsumption(row, messages, serialNumber, out var consumption))
+                if (!TryGetConsumption(row, serialNumber, out var consumption))
                     return;
-                readings.Add(new MeterReading(serialNumber, consumption, TariffZoneHelper.Normalize("")));
+                TryAddReading(new MeterReading(serialNumber, consumption, TariffZone.ConstantTariff));
             }
         }
-        private bool ValidateSerialNumber(IXLRow row, List<ImportMessage> messages, string serialNumber)
+        private bool ValidateSerialNumber(IXLRow row, string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
             {
-                messages.Add(CreateMessage($"Пропущен серийный номер в строке {row.RowNumber()}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Пропущен серийный номер в строке {row.RowNumber()}", MessageType.Warning));
                 return false;
             }
             return true;
         }
-        private bool TryGetConsumption(IXLRow row, List<ImportMessage> messages, string serial, out decimal consumption)
+        private bool TryGetConsumption(IXLRow row, string serial, out decimal consumption)
         {
             string consumptionString = row.Cell(_column.ConsumptionColumn).GetString();
             if (!decimal.TryParse(consumptionString, out consumption))
             {
-                messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {row.RowNumber()}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {row.RowNumber()}", MessageType.Warning));
                 return false;
             }
             if (consumption < 0 || consumption > 999999)
             {
-                messages.Add(CreateMessage($"Некорректное показание {consumption} для ПУ {serial}, строка {row.RowNumber()}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Некорректное показание {consumption} для ПУ {serial}, строка {row.RowNumber()}", MessageType.Warning));
                 return false;
             }
             return true;

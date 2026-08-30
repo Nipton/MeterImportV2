@@ -1,6 +1,6 @@
 ﻿namespace MeterImportV2.Models
 {
-    public class MeterReading
+    public record MeterReading
     {
         public string Serial { get; set; } = string.Empty;
         public decimal Consumption { get; set; }

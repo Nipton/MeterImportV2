@@ -19,7 +19,7 @@ namespace MeterImportV2.Writers
         {
             _column = settings.Value.Writer;
         }
-        public IEnumerable<ImportMessage> Write(IEnumerable<MeterReading> readingsList, string path, ResourceType resourceType, Company company)
+        public IEnumerable<ImportMessage> Write(Dictionary<(string Serial, string TariffZone), MeterReading> readings, string path, ResourceType resourceType, Company company)
         {
             ValidateColumnSettings();
             using var workbook = new XLWorkbook(path);
@@ -28,7 +28,6 @@ namespace MeterImportV2.Writers
             var worksheet = workbook.Worksheet(1);
             var rows = worksheet.RowsUsed().Skip(_column.HeaderRow);
             List<ImportMessage> messages = new();
-            var readings = readingsList.ToDictionary(r => (r.Serial, r.TariffZone), r => r, new TupleStringComparer());
             Dictionary<string, List<SpecialMeter>>? specialMeters = null;
             if (resourceType == ResourceType.Electricity && company == Company.Dial)
                 specialMeters = LoadSpecialMeters(messages);
@@ -49,7 +48,7 @@ namespace MeterImportV2.Writers
             }
             messages.Add(new ImportMessage($"Успешно обработано {successCount} {WordForms.GetRecordsWord(successCount)} из {rowCount}", MessageType.Info));
             workbook.SaveAs(CreateResultPath(path));
-            messages.Add(new ImportMessage("Файл был сохранен на рабочий стол", MessageType.Info));
+            messages.Add(new ImportMessage("Файл сохранен на рабочий стол", MessageType.Info));
             return messages;
         }
         private bool ProcessRow(IXLRow row, List<ImportMessage> messages, Dictionary<(string Serial, string TariffZone), MeterReading> readings, Dictionary<string, List<SpecialMeter>>? specialMeters)
@@ -61,7 +60,7 @@ namespace MeterImportV2.Writers
                 messages.Add(CreateMessage($"Пропущен серийный номер в строке {rowNumber}", MessageType.Warning));
                 return false;
             }
-            string tariffZone = TariffZoneHelper.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
+            string tariffZone = TariffZone.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
             if (!readings.TryGetValue((serial, tariffZone), out var meter))
             {
                 messages.Add(CreateMessage($"Не найдены показания для ПУ {serial}, строка {rowNumber}", MessageType.Warning));

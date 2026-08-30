@@ -5,6 +5,6 @@ namespace MeterImportV2.Interfaces
 {
     public interface ITemplateWriter
     {
-        IEnumerable<ImportMessage> Write(IEnumerable<MeterReading> readingsList, string path, ResourceType resourceType, Company company);
+        IEnumerable<ImportMessage> Write(Dictionary<(string Serial, string TariffZone), MeterReading> readings, string path, ResourceType resourceType, Company company);
     }
 }

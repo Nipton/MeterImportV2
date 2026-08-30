@@ -2,9 +2,9 @@
 {
     public class ReaderResult
     {
-        public IEnumerable<MeterReading> Readings { get; }
+        public Dictionary<(string Serial, string TariffZone), MeterReading> Readings { get; }
         public IEnumerable<ImportMessage> ImportMessages { get; }
-        public ReaderResult(IEnumerable<MeterReading> readings, IEnumerable<ImportMessage> messages)
+        public ReaderResult(Dictionary<(string Serial, string TariffZone), MeterReading> readings, IEnumerable<ImportMessage> messages)
         {
             Readings = readings;
             ImportMessages = messages;

@@ -10,37 +10,37 @@ namespace MeterImportV2.Readers
     public class DialElectricityReader : BaseReader
     {
         public DialElectricityReader(IOptions<AppSettings> settings) : base(settings.Value.GetReaderSettings(ResourceType.Electricity, Company.Dial)){}
-        protected override void ProcessRow(IXLRow row, List<ImportMessage> messages, List<MeterReading> readings)
+        protected override void ProcessRow(IXLRow row)
         {
             int rowNumber = row.RowNumber();
             string serial = row.Cell(_column.SerialColumn).GetString();
             if (string.IsNullOrWhiteSpace(serial))
             {
-                messages.Add(CreateMessage($"Пропущен серийный номер в строке {rowNumber}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Пропущен серийный номер в строке {rowNumber}", MessageType.Warning));
                 return;
             }
             string address = row.Cell(_column.AddressColumn).GetString();
             if (string.IsNullOrWhiteSpace(address))
             {
-                messages.Add(CreateMessage($"Пропущен адрес для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Пропущен адрес для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
                 return;
             }
-            string tariffZone = TariffZoneHelper.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
+            string tariffZone = TariffZone.Normalize(row.Cell(_column.TariffZoneColumn).GetString());
 
             string consumptionString = row.Cell(_column.ConsumptionColumn).GetString();
             if (!decimal.TryParse(consumptionString, out decimal consumption))
             {
-                messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Не удалось прочитать показания для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
                 return;
             }
             if (consumption < 0 || consumption > 999999)
             {
-                messages.Add(CreateMessage($"Некорректное показание {consumption} для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
+                _messages.Add(CreateMessage($"Некорректное показание {consumption} для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
                 return;
             }
 
             var meter = new MeterReading(serial, consumption, address, tariffZone);
-            readings.Add(meter);
+            TryAddReading(meter);
         }
         protected override void ValidateColumnSettings()
         {

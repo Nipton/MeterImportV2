@@ -33,9 +33,9 @@ namespace MeterImportV2
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<IFileValidator, FileValidator>();
             services.AddSingleton<IImportServiceFactory, ImportServiceFactory>();
-            services.AddSingleton<DialElectricityReader>();
-            services.AddSingleton<DialColdWaterReader>();
-            services.AddSingleton<ComfortAndSmartElectricityReader>();
+            services.AddTransient<DialElectricityReader>();
+            services.AddTransient<DialColdWaterReader>();
+            services.AddTransient<ComfortAndSmartElectricityReader>();
             services.AddSingleton<Writer>();
 
             Services = services.BuildServiceProvider();

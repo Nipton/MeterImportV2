@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37216.2 d17.14
+VisualStudioVersion = 17.14.37216.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeterImportV2", "MeterImportV2\MeterImportV2.csproj", "{F5596397-F10E-4DBD-8423-576C9CC7C208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeterImportV2.IntegrationTests", "IntegrationTests\MeterImportV2.IntegrationTests.csproj", "{C6C1497E-2BEA-48E8-BBDF-DC39209EA732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F5596397-F10E-4DBD-8423-576C9CC7C208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5596397-F10E-4DBD-8423-576C9CC7C208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5596397-F10E-4DBD-8423-576C9CC7C208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6C1497E-2BEA-48E8-BBDF-DC39209EA732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6C1497E-2BEA-48E8-BBDF-DC39209EA732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6C1497E-2BEA-48E8-BBDF-DC39209EA732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6C1497E-2BEA-48E8-BBDF-DC39209EA732}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
