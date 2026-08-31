@@ -48,16 +48,11 @@ namespace MeterImportV2.IntegrationTests
             Assert.Contains(meter2, readings);
             Assert.Contains(meter3, readings);
         }
-        [Theory]
-        [InlineData("300")]
-        [InlineData("100")]
-        [InlineData("250")]
-        [InlineData("700")]
-        [InlineData("333")]
-        [InlineData("800")]
-        [InlineData("444")]
-        public void Read_ConflictingSerials_ReturnsErrors(string serial)
+        [Fact]
+        public void Read_ConflictingSerials_ReturnsErrors()
         {
+            // Arrange
+            var expectedSerials = new[] { "100", "250", "300", "333", "444", "700", "800" };
             // Act
             var result = _reader.Read(_testFilePath);
             var errorMessages = result.ImportMessages.Where(x => x.MessageType == MessageType.Error).ToList();
@@ -67,10 +62,13 @@ namespace MeterImportV2.IntegrationTests
             Assert.NotNull(result);
             Assert.NotEmpty(errorMessages);
             Assert.Equal(7, count);
-            Assert.Contains(errorMessages, m => m.Message.Contains($"Невозможно определить тарифную зону для ПУ {serial}, так как обнаружены конфликтующие записи"));
+            foreach (var serial in expectedSerials)
+            {
+                Assert.Contains(errorMessages, m => m.Message.Contains($"Невозможно определить тарифную зону для ПУ {serial}, так как обнаружены конфликтующие записи"));
+            }
         }
         [Fact]
-        public void Read_ConflictingSerials_ReturnsWarning()
+        public void Read_InvalidData_ReturnsWarning()
         {
             // Act
             var result = _reader.Read(_testFilePath);

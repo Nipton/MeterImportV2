@@ -1,4 +1,5 @@
-﻿using MeterImportV2.Models.Enums;
+﻿using MeterImportV2.Exceptions;
+using MeterImportV2.Models.Enums;
 
 namespace MeterImportV2.Models
 {
@@ -8,7 +9,14 @@ namespace MeterImportV2.Models
         public TemplateColumnSettings Writer { get; set; } = new();
         public ReadingsColumnSettings GetReaderSettings(ResourceType resource, Company company)
         {
-            return Readers[resource.ToString()][company.ToString()];
+            try
+            {
+                return Readers[resource.ToString()][company.ToString()];
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ImportException($"Не удалось найти настройки для ресурса '{resource}' и компании '{company}'. Проверьте файл настроек.");
+            }
         }
     }
 }

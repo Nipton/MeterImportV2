@@ -34,7 +34,7 @@ namespace MeterImportV2.Readers
                 _messages.Add(CreateMessage($"Некорректное показание {consumption} для ПУ {serial}, строка {rowNumber}", MessageType.Warning));
                 return;
             }
-            string tariffZone = TariffZone.Normalize("");
+            string tariffZone = TariffZone.ConstantTariff;
             var meter = new MeterReading(serial, consumption, tariffZone);
             TryAddReading(meter);
         }
